@@ -1,0 +1,24 @@
+{{ template "header" . }}
+<h3>message</h3>
+<table>
+    <tr>
+        <th>id</th>
+        <th>uid</th>
+        <th>message</th>
+        <th>reply</th>
+        <th>create time</th>
+    </tr>
+    {{ range .list }}
+    <tr>
+        <td>{{ .ID }} </td>
+        <td>{{ .UID }} </td>
+        <td>{{ .TextContent }} </td>
+        <td>{{ if  .ReplyText }}
+                {{.ReplyText}}
+            {{end}}
+        </td>
+        <td>{{ .CreateTime }}</td>
+    </tr>
+    {{ end }}
+</table>
+{{ template "footer" . }}
