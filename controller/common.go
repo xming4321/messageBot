@@ -34,7 +34,7 @@ func RenderError(ctx *gin.Context, res Response) {
 
 func RenderResponseSuccess(ctx *gin.Context, data interface{}) {
 	ctx.JSON(200, Response{
-		Status:  101,
+		Status:  200,
 		Message: "成功",
 		Data:    data,
 	})

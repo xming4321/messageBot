@@ -37,6 +37,7 @@
         <th>type</th>
         <th>reply</th>
         <th>create time</th>
+        <th></th>
     </tr>
     <tbody id="content">
     </tbody>
@@ -44,6 +45,7 @@
 
 <script>
     function loadList() {
+        console.log("load data");
         $.getJSON("/manage/template/list", function (data) {
             var dataHtml = "";
             $.each(data.data.list, function (index, obj) {
@@ -58,6 +60,7 @@
 
                 dataHtml += "<td>" + obj.Reply + "</td>";
                 dataHtml += "<td>" + obj.CreateTime + "</td>";
+                dataHtml += '<td><button type="button" class="pure-button" onclick="delTpl(' + obj.ID + ')">删除</button></td>';
                 dataHtml += "</tr>";
             });
             console.log(dataHtml);
@@ -65,45 +68,67 @@
         });
     }
 
-    $(document).ready(function (){
-        loadList();
-    });
-
-    $("#command").on( "change", function () {
-        var command = $("#command").val();
-        if (command) {
-            $("#div_reg").addClass("hidden")
-        } else {
-            $("#div_reg").removeClass("hidden");
-        }
-    });
-
-    $("#sub_tpl").click(function() {
-        var command = $("#command").val();
-        var reg = $("#reg").val();
-        var reply = $("#reply").val();
-
-        if (command) {
-            reg = "";
-        }
-
+    function delTpl(tplID) {
+        console.log("del:"+ tplID);
         $.ajax({
-            type: "POST",//方法类型
-            contentType : 'application/json;charset=UTF-8',
-            dataType: "json",//预期
-            url: "/manage/template/create",
-            data: JSON.stringify({"command": command, "reg": reg, "reply": reply}),
-            success:function (message) {
-                if (message.status == 200 ){
-                    $("#message").html("提交成功！");
+            url: "/manage/template/remove?id=" + tplID,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                if (response.status == 200 ){
                     loadList();
                 } else {
-                    $("#message").html(message.msg);
+                    $(event.target).after("<message class='pure-'>"+response.message.msg+"</message>");
                 }
             },
-            error:function (message) {
-                $("#message").html("提交失败！");
+            error: function(xhr, status, error) {
+                console.log(status);
+                $(event.target).after("<message>删除错误</message>");
             }
+        });
+    };
+
+    $(document).ready(function () {
+        loadList();
+
+        $("#command").on( "change", function () {
+            var command = $("#command").val();
+            if (command) {
+                $("#div_reg").addClass("hidden")
+            } else {
+                $("#div_reg").removeClass("hidden");
+            }
+        });
+
+
+
+        $("#sub_tpl").click(function() {
+            var command = $("#command").val();
+            var reg = $("#reg").val();
+            var reply = $("#reply").val();
+
+            if (command) {
+                reg = "";
+            }
+
+            $.ajax({
+                type: "POST",//方法类型
+                contentType : 'application/json;charset=UTF-8',
+                dataType: "json",//预期
+                url: "/manage/template/create",
+                data: JSON.stringify({"command": command, "reg": reg, "reply": reply}),
+                success:function (message) {
+                    if (message.status == 200 ){
+                        $("#message").html("提交成功！");
+                        loadList();
+                    } else {
+                        $("#message").html(message.msg);
+                    }
+                },
+                error:function (message) {
+                    $("#message").html("提交失败！");
+                }
+            });
         });
     });
 

@@ -9,6 +9,6 @@ mysql:
   maxopenconns: 100
 
 tgBot:
-  token: xxx-1 #token
+  token: token-23 #token
   debug: true
   timeout: 20
